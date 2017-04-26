@@ -6,11 +6,6 @@ public class EnemySpawnRegion : MonoBehaviour {
 
     [SerializeField]
     GameObject mEnemyPrefab = null;
-    
-
-
-
-
     // Use this for initialization
     void Start () {
 	}

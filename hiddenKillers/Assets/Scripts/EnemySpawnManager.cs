@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using UnityEngine.UI;
 using System.Collections.Generic;
 
 public class EnemySpawnManager : MonoBehaviour {
@@ -7,6 +8,8 @@ public class EnemySpawnManager : MonoBehaviour {
     Collider mSpawnArea = null;
     [SerializeField]
     EnemySpawnRegion mEnemySpawnRegion = null;
+    [SerializeField]
+    Text mEnemyAmountText = null;
 
     static EnemySpawnManager mInstance = null;
 
@@ -59,6 +62,7 @@ public class EnemySpawnManager : MonoBehaviour {
                         mEnemiesOnMap.Add(mEnemySpawnRegion.instantiateEnemy());
                         Debug.Log("enemy created");
                         mTimeSinceLastSpawn = 0f;
+                        mEnemyAmountText.text = mEnemiesOnMap.Count.ToString();
                     }
                     else
                     {
@@ -107,19 +111,12 @@ public class EnemySpawnManager : MonoBehaviour {
     public void killAllInvisibleEnemies()
     {
         mEnemiesOnMap.RemoveWhere(delegate (Enemy enemy) { return enemy.destroyIfNotVisible(); });
-        /*
-        foreach(var curEnemy in mEnemiesOnMap)
-        {
-            
-            curEnemy.destroyIfNotVisible();
-            //mEnemiesOnMap.Remove(curEnemy);
-        }
-        */
-        int i = 0;
+        mEnemyAmountText.text = mEnemiesOnMap.Count.ToString();
     }
 
     public void removeEnemyFromMap(Enemy enemy)
     {
         mEnemiesOnMap.Remove(enemy);
+        mEnemyAmountText.text = mEnemiesOnMap.Count.ToString();
     }
 }
