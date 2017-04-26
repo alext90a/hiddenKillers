@@ -73,10 +73,11 @@
     <Compile Include="Assets\MFPSC\Scripts\UI\FP_Joystick.cs" />
     <Compile Include="Assets\MFPSC\Scripts\UI\FP_Lookpad.cs" />
     <Compile Include="Assets\MFPSC\Temp\WeaponExample.cs" />
+    <Compile Include="Assets\Scripts\Enemy.cs" />
     <Compile Include="Assets\Scripts\EnemySpawnManager.cs" />
     <Compile Include="Assets\Scripts\EnemySpawnRegion.cs" />
     <Compile Include="Assets\Scripts\GameConstants.cs" />
-    <Compile Include="Assets\Scripts\VisibleTest.cs" />
+    <Compile Include="Assets\Scripts\Player.cs" />
     <Compile Include="Assets\Scripts\Wall.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

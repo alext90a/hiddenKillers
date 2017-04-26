@@ -14,6 +14,8 @@ public class EnemySpawnManager : MonoBehaviour {
     float mTimeSinceLastSpawn = 0f;
     float mMaxX, mMaxY, mMinY, mMinX;
     List<Bounds> mWallBounds = new List<Bounds>();
+    Collider mEnemySpawnCollider = null;
+    HashSet<Enemy> mEnemiesOnMap = new HashSet<Enemy>();
 
     public static EnemySpawnManager getInstance()
     {
@@ -33,39 +35,50 @@ public class EnemySpawnManager : MonoBehaviour {
 
         mMinX = bounds.min.x;
         mMinY = bounds.min.y;
-
+        mEnemySpawnCollider = mEnemySpawnRegion.GetComponent<Collider>();
+        if(mEnemySpawnCollider == null)
+        {
+            Debug.LogError("Enemy spawn collider not found!");
+        }
         
 	}
 	
 	// Update is called once per frame
 	void Update () {
-	
-        if(Input.GetKeyDown(KeyCode.R))
+
+        mTimeSinceLastSpawn += Time.deltaTime;
+        if(mTimeSinceLastSpawn >= GameConstants.kEnemySpawnTime)
         {
-            setInRandomPosition();
-            if(!isInsideWall())
+            while(mTimeSinceLastSpawn>= GameConstants.kEnemySpawnTime)
             {
-                if(!mEnemySpawnRegion.isVisibleByPlayer())
+                setInRandomPosition();
+                if (!isInsideWall())
                 {
-                    mEnemySpawnRegion.instantiateEnemy();
-                    Debug.Log("enemy created");
+                    if (!Player.getInstance().isObjectVisibleByPlayer(mEnemySpawnCollider))
+                    {
+                        mEnemiesOnMap.Add(mEnemySpawnRegion.instantiateEnemy());
+                        Debug.Log("enemy created");
+                        mTimeSinceLastSpawn = 0f;
+                    }
+                    else
+                    {
+                        Debug.Log("Spawn aborted by player");
+                    }
+
                 }
                 else
                 {
-                    Debug.Log("Spawn aborted by player");
+                    Debug.Log("Spawn aborted by wall");
                 }
-
-            }
-            else
-            {
-                Debug.Log("Spawn aborted by wall");
             }
         }
+	
+        
 	}
 
     bool isInsideWall()
     {
-        Bounds spawnBounds = mEnemySpawnRegion.GetComponent<Collider>().bounds;
+        Bounds spawnBounds = mEnemySpawnCollider.bounds;
         for(int i=0; i<mWallBounds.Count; ++i)
         {
             if (mWallBounds[i].Intersects(spawnBounds))
@@ -89,5 +102,24 @@ public class EnemySpawnManager : MonoBehaviour {
     public void addWallBounds(Bounds bounds)
     {
         mWallBounds.Add(bounds);
+    }
+
+    public void killAllInvisibleEnemies()
+    {
+        mEnemiesOnMap.RemoveWhere(delegate (Enemy enemy) { return enemy.destroyIfNotVisible(); });
+        /*
+        foreach(var curEnemy in mEnemiesOnMap)
+        {
+            
+            curEnemy.destroyIfNotVisible();
+            //mEnemiesOnMap.Remove(curEnemy);
+        }
+        */
+        int i = 0;
+    }
+
+    public void removeEnemyFromMap(Enemy enemy)
+    {
+        mEnemiesOnMap.Remove(enemy);
     }
 }
